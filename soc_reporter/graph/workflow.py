@@ -4,10 +4,15 @@ from langchain_core.messages import AIMessage
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_openai import ChatOpenAI
 from typing_extensions import TypedDict
-
+from typing import List
 from langgraph.graph import END, StateGraph, START
 from langgraph.graph.message import AnyMessage, add_messages
-
+from soc_reporter.toolkits.db_tools import db_list_tables_tool, db_get_schema_tool, db_query_tool
+from soc_reporter.utils.tool_node_creater import (
+    create_tool_node_with_fallback
+)
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.messages import ToolMessage
 
 # Define the state for the agent
 class State(TypedDict):
@@ -17,6 +22,29 @@ class State(TypedDict):
 # Define a new graph
 workflow = StateGraph(State)
 
+query_check_system = """You are a SQL expert with a strong attention to detail.
+Double check the SQLite query for common mistakes, including:
+- Using NOT IN with NULL values
+- Using UNION when UNION ALL should have been used
+- Using BETWEEN for exclusive ranges
+- Data type mismatch in predicates
+- Properly quoting identifiers
+- Using the correct number of arguments for functions
+- Casting to the correct data type
+- Using the proper columns for joins
+
+If there are any of the above mistakes, rewrite the query. If there are no mistakes, just reproduce the original query.
+
+You will call the appropriate tool to execute the query after running this check."""
+
+query_check_prompt = ChatPromptTemplate.from_messages(
+    [("system", query_check_system), ("placeholder", "{messages}")]
+)
+query_check = query_check_prompt | ChatOpenAI(model="gpt-4o", temperature=0).bind_tools(
+    [db_query_tool], tool_choice="required"
+)
+
+query_check.invoke({"messages": [("user", "SELECT * FROM Artist LIMIT 10;")]})
 
 # Add a node for the first tool call
 def first_tool_call(state: State) -> dict[str, list[AIMessage]]:
@@ -47,13 +75,13 @@ workflow.add_node("first_tool_call", first_tool_call)
 
 # Add nodes for the first two tools
 workflow.add_node(
-    "list_tables_tool", create_tool_node_with_fallback([list_tables_tool])
+    "list_tables_tool", create_tool_node_with_fallback([db_list_tables_tool])
 )
-workflow.add_node("get_schema_tool", create_tool_node_with_fallback([get_schema_tool]))
+workflow.add_node("get_schema_tool", create_tool_node_with_fallback([db_get_schema_tool]))
 
 # Add a node for a model to choose the relevant tables based on the question and available tables
 model_get_schema = ChatOpenAI(model="gpt-4o", temperature=0).bind_tools(
-    [get_schema_tool]
+    [db_get_schema_tool]
 )
 workflow.add_node(
     "model_get_schema",

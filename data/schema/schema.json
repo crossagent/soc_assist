@@ -1,0 +1,18 @@
+{
+    "BattleLogInOut_0": {
+        "schema": "\nCREATE TABLE `BattleLogInOut_0` (\n\t`GameSvrId` varchar(32),\n\t`dtEventTime` datetime COMMENT 'Event timestamp, records the time the event occurred',\n\t`iZoneAreaID` int(11) COMMENT 'Zone Area ID, identifies the in-game zone or area',\n\t`RoleID` varchar(64) COMMENT 'Role ID, uniquely identifies the player's role',\n\t`BattleSrvId` varchar(32) COMMENT 'Battle server ID, identifies the server where the battle takes place',\n\t`Map` varchar(64) COMMENT 'Map, identifies the in-game map id',\n\t`team_number` smallint(6) COMMENT 'Team number, represents the number of players in the team',\n\t`location` varchar(64) COMMENT 'Location, represents the player's coordinates in the game',\n\t`BattleTeamId` varchar(32) COMMENT 'Battle team ID, the ID corresponding to the team the player is in. Returns 0 if no team',\n\t`BattleLoginTime` varchar(64) COMMENT 'Battle login time, the time the player logged into the battle',\n\t`BattleLogoutTime` varchar(64) COMMENT 'Battle logout time, the time the player logged out of the battle',\n\t`BattleLogDuration` int(11) COMMENT 'Battle log duration, records the duration from login to logout in the battle'\n) ENGINE=InnoDB DEFAULT CHARSET=utf8;",
+        "example": "/*\n3 rows from BattleLogInOut_0 table:\nGameSvrId\tdtEventTime\tiZoneAreaID\tRoleID\tBattleSrvId\tMap\tteam_number\tlocation\tBattleTeamId\tBattleLoginTime\tBattleLogoutTime\tBattleLogDuration\n*/"
+    },
+    "BattleItem_0": {
+        "schema": "\nCREATE TABLE `BattleItem_0` (\n\t`dtEventTime` datetime COMMENT 'Event timestamp, records the time the event occurred',\n\t`RoleID` varchar(64) COMMENT 'Role ID, uniquely identifies the player's role',\n\t`BattleSrvId` varchar(32) COMMENT 'Battle server ID, identifies the server where the battle takes place',\n\t`BattleTeamId` varchar(32) COMMENT 'Battle team ID, the ID corresponding to the team the player is in. Returns 0 if no team',\n\t`BattleItemId` int(11) COMMENT 'item unique id',\n\t`BattleItemPosition` varchar(32),\n\t`BattleItemChangeType` varchar(32),\n\t`BattleItemChangeSource` varchar(32) COMMENT 'indicate the source of item change in string',\n\t`BattleItemChangeSourceId` varchar(64) COMMENT 'the entity template id of source type',\n\t`BattleItemDelta` int(11) COMMENT 'the numbers of item change',\n\t`BattleItemBefore` int(11),\n\t`BattleItemAfter` int(11)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8;",
+        "example": "/*\n3 rows from BattleItem_0 table:\ndtEventTime\tBattleSrvId\tRoleID\tBattleTeamId\tBattleItemId\tBattleItemPosition\tBattleItemChangeType\tBattleItemChangeSource\tBattleItemChangeSourceId\tBattleItemDelta\tBattleItemBefore\tBattleItemAfter\n*/"
+    },
+    "Gather_0": {
+        "schema": "\nCREATE TABLE `Gather_0` (\n\t`dtEventTime` datetime COMMENT 'time when gather event',\n\t`RoleID` varchar(64),\n\t`BattleSrvId` varchar(32) COMMENT 'Battle server ID, identifies the server where the battle takes place',\n\t`location` varchar(64),\n\t`GatherItem` bigint(20) COMMENT 'id of item',\n\t`GatherItemNumber` bigint(20),\n\t`GatherSource` varchar(32),\n\t`GatherTool` int(11)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8;",
+        "example": "/*\n3 rows from Gather_0 table:\ndtEventTime\tBattleSrvId\tRoleID\tlocation\tGatherItem\tGatherItemNumber\tGatherSource\tGatherTool\n*/"
+    },
+    "PlayerLogin_0": {
+        "schema": "\nCREATE TABLE `PlayerLogin_0` (\n\t`dtEventTime` datetime COMMENT 'Event timestamp, records the time the event occurred',\n\t`RoleID` varchar(64),\n\t`RoleName` varchar(64)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8;",
+        "example": "/*\n3 rows from PlayerLogin_0 table:\ndtEventTime\tRoleID\tRoleName\n*/"
+    }
+}
