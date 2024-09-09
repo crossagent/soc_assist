@@ -54,7 +54,7 @@ def first_tool_call(state: State) -> dict[str, list[AIMessage]]:
                 content="",
                 tool_calls=[
                     {
-                        "name": "sql_db_list_tables",
+                        "name": "db_list_tables_tool",
                         "args": {},
                         "id": "tool_abcd123",
                     }
@@ -185,3 +185,16 @@ workflow.add_edge("execute_query", "query_gen")
 
 # Compile the workflow into a runnable
 app = workflow.compile()
+
+
+if __name__ == "__main__":
+    # messages = app.invoke(
+    #     {"messages": [("user", "今天谁获得了最多的木头")]}
+    # )
+    # json_str = messages["messages"][-1].tool_calls[0]["args"]["final_answer"]
+    # json_str
+
+    for event in app.stream(
+        {"messages": [("user", "今天roleid：123采集获得了多少物品120001和12002")]}
+    ):
+        print(event)
